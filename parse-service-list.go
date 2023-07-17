@@ -107,3 +107,39 @@ func ParsePSOutput(bytestream []byte) ([]ProcessStatusItems, error) {
 
 	return processes, nil
 }
+
+type DiskUsages struct {
+	Source string `json:"source"`
+	Target string `json:"target"`
+	Perc   string `json:"pcent"`
+	Used   string `json:"used"`
+	Total  string `json:"itotal"`
+}
+
+func ParseDiskUsage(output []byte) ([]DiskUsages, error) {
+	lines := strings.Split(string(output), "\n")
+	if len(lines) == 0 {
+		return nil, fmt.Errorf("no disk usage data found")
+
+	}
+	diskUsages := make([]DiskUsages, 0)
+
+	for i := 1; i < len(lines); i++ {
+		fields := strings.Fields(lines[i])
+		if len(fields) >= 5 {
+			diskUsage := DiskUsages{
+				Source: fields[0],
+				Target: fields[1],
+				Perc:   fields[2],
+				Used:   fields[3],
+				Total:  fields[4],
+			}
+			diskUsages = append(diskUsages, diskUsage)
+		}
+	}
+	if len(diskUsages) == 0 {
+		return nil, fmt.Errorf("no disk usage data found")
+	}
+
+	return diskUsages, nil
+}

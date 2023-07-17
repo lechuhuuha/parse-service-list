@@ -136,3 +136,45 @@ func TestCollectServiceInfoAndJsonMarshal(t *testing.T) {
 	// Print the JSON
 	fmt.Println(string(jsonData))
 }
+
+func collectDiskUsage() ([]DiskUsages, error) {
+	cmd := exec.Command("df", "-h", "--output=source,target,pcent,used,itotal")
+	outputData, err := cmd.Output()
+	if err != nil {
+		return nil, err
+	}
+
+	serviceItemsList, err := ParseDiskUsage(outputData)
+	if err != nil {
+		return serviceItemsList, err
+	}
+
+	return serviceItemsList, nil
+}
+
+func TestParseDiskUsage(t *testing.T) {
+	serviceItemsList, err := collectDiskUsage()
+
+	if err != nil {
+		t.Errorf("Error collecting service info: %v", err)
+	}
+
+	// Perform assertions on the serviceItemsList
+	if len(serviceItemsList) == 0 {
+		t.Error("Expected non-empty serviceItemsList, but got empty")
+	}
+
+	for _, du := range serviceItemsList {
+		serviceType := reflect.TypeOf(du)
+		expectedFields := []string{"Source", "Target", "Perc", "Used", "Total"}
+		for _, field := range expectedFields {
+			_, found := serviceType.FieldByName(field)
+			if !found {
+				t.Errorf("Expected field %q not found in SystemdItems element: %v\n", field, du)
+			}
+		}
+
+		fmt.Printf("Source: %s, Target: %s, Percent: %s, Used: %s, Total: %s\n",
+			du.Source, du.Target, du.Perc, du.Used, du.Total)
+	}
+}
