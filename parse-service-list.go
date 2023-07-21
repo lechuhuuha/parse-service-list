@@ -59,7 +59,6 @@ type ProcessStatusItems struct {
 func ParsePSOutput(bytestream []byte) ([]ProcessStatusItems, error) {
 	var processes []ProcessStatusItems
 	bsString := string(bytestream)
-
 	lines := strings.Split(bsString, "\n")
 
 	if len(lines) <= 1 {
@@ -91,7 +90,7 @@ func ParsePSOutput(bytestream []byte) ([]ProcessStatusItems, error) {
 		mem := 0.0
 		fmt.Sscanf(fields[4], "%f", &mem)
 
-		command := fields[5]
+		command := strings.Join(fields[5:], " ")
 
 		process := ProcessStatusItems{
 			PID:     pid,
