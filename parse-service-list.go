@@ -21,7 +21,7 @@ func ParseSystemdOutput(bytestream []byte) ([]SystemdItems, error) {
 	lines := strings.Split(bsString, "\n")
 
 	if len(lines) <= 1 {
-		return nil, fmt.Errorf("unable to parse bytestream []byte: insufficient lines")
+		return serviceItemsList, nil
 	}
 
 	for k, v := range lines {
@@ -62,7 +62,7 @@ func ParsePSOutput(bytestream []byte) ([]ProcessStatusItems, error) {
 	lines := strings.Split(bsString, "\n")
 
 	if len(lines) <= 1 {
-		return nil, fmt.Errorf("unable to parse bytestream []byte: insufficient lines")
+		return processes, nil
 	}
 
 	for k, v := range lines {
@@ -118,7 +118,7 @@ type DiskUsages struct {
 func ParseDiskUsage(output []byte) ([]DiskUsages, error) {
 	lines := strings.Split(string(output), "\n")
 	if len(lines) == 0 {
-		return nil, fmt.Errorf("no disk usage data found")
+		return make([]DiskUsages, 0), nil
 
 	}
 	diskUsages := make([]DiskUsages, 0)
