@@ -29,7 +29,7 @@ func ParseSystemdOutput(bytestream []byte) ([]SystemdItems, error) {
 			continue
 		}
 
-		re := regexp.MustCompile(`\s(.+\.service)\s+([A-z]+)\s+([A-z]+)\s+([A-z]+)\s+(.+)`)
+		re := regexp.MustCompile(`(?:\s)?(.+\.service)\s+([A-z]+)\s+([A-z]+)\s+([A-z]+)\s+(.+)`)
 		segments := re.FindAllStringSubmatch(v, -1)
 
 		if len(segments) > 0 {
